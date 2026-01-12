@@ -1,0 +1,730 @@
+{
+  "name": "LiL 5349037 Workflow 6",
+  "nodes": [
+    {
+      "parameters": {
+        "formTitle": "Document upload",
+        "formDescription": "Upload an image file",
+        "formFields": {
+          "values": [
+            {
+              "fieldName": "data",
+              "fieldLabel": "Document Picture / Screenshot",
+              "fieldType": "file",
+              "acceptFileTypes": ".jpg, .png"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.formTrigger",
+      "typeVersion": 2.4,
+      "position": [
+        -1360,
+        48
+      ],
+      "id": "aa85e2c6-8ad5-468f-94e0-df5fb621b21f",
+      "name": "On form submission",
+      "webhookId": "0a8fb929-c586-41f7-aa17-ef34e872275f"
+    },
+    {
+      "parameters": {
+        "dataTableId": {
+          "__rl": true,
+          "value": "e7FMZbdpdy3SWUYX",
+          "mode": "list",
+          "cachedResultName": "train_tickets",
+          "cachedResultUrl": "/projects/DQNBPdBQuCND1N0d/datatables/e7FMZbdpdy3SWUYX"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "price": "={{ $json.price }}",
+            "start": "={{ $json.travel_date.start }}",
+            "end": "={{ $json.travel_date.end }}",
+            "from": "={{ $json.city.from }}",
+            "to": "={{ $json.city.to }}",
+            "class": "={{ $json.class }}",
+            "filename": "={{ $json.filename }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "start",
+              "displayName": "start",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "end",
+              "displayName": "end",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "from",
+              "displayName": "from",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "to",
+              "displayName": "to",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "price",
+              "displayName": "price",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "class",
+              "displayName": "class",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "filename",
+              "displayName": "filename",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {
+          "optimizeBulk": false
+        }
+      },
+      "type": "n8n-nodes-base.dataTable",
+      "typeVersion": 1.1,
+      "position": [
+        1424,
+        112
+      ],
+      "id": "dfaff554-bd91-49f6-881d-04319e8c7891",
+      "name": "Insert row"
+    },
+    {
+      "parameters": {
+        "mode": "combine",
+        "combineBy": "combineByPosition",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.2,
+      "position": [
+        1056,
+        -528
+      ],
+      "id": "6f7c4985-60e1-4fd7-a312-b38372cdc884",
+      "name": "Merge"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "9655cb62-c2db-4e72-8083-efe15180594c",
+              "name": "filename",
+              "value": "={{ $binary.data.fileName }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        240,
+        64
+      ],
+      "id": "d403495a-09ac-4fa9-9359-a0666912f85c",
+      "name": "Document Metadata"
+    },
+    {
+      "parameters": {
+        "operation": "completion",
+        "completionTitle": "Added!",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.form",
+      "typeVersion": 2.4,
+      "position": [
+        -736,
+        -160
+      ],
+      "id": "2347ca2e-b6cb-411a-8c39-148119b8ed62",
+      "name": "Form",
+      "webhookId": "68fef94d-092a-4c10-bc3c-51201f9471e0"
+    },
+    {
+      "parameters": {
+        "fieldToSplitOut": "$binary",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitOut",
+      "typeVersion": 1,
+      "position": [
+        -1168,
+        48
+      ],
+      "id": "bdf3b758-911a-4630-b2f3-fe0035c1807b",
+      "name": "Split Out"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        -960,
+        48
+      ],
+      "id": "6ac46bb8-c8c4-4807-b56d-19a02ed6239c",
+      "name": "Loop Over Items"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "a3b22d65-b09c-44b7-88b9-86c68ed384ce",
+              "name": "data",
+              "value": "={{ Object.keys($binary)[0] }}",
+              "type": "binary"
+            },
+            {
+              "id": "703702ec-8a4a-495e-85fd-38e72822a414",
+              "name": "",
+              "value": "",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -768,
+        64
+      ],
+      "id": "0b6bcba2-0673-4355-86c9-3b105b567853",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "0281493c-d029-4124-89ef-4e3d6ce9aecd",
+              "name": "core_system",
+              "value": "You are a **document value extraction system**.  \n\nYour task is to analyze the provided document and extract **only** the explicitly requested values. Do **not** infer, guess, normalize beyond the specified format, or include any additional fields.  \n\n### Extraction Rules  \n* Extract **exactly** the fields listed below — no more, no less. \n* If a value is missing or unclear, return `null` for that field. \n* Output must be **valid JSON only**, with no extra text. \n* Dates must follow the exact format specified. \n* Numeric values must not include currency symbols.",
+              "type": "string"
+            }
+          ]
+        },
+        "includeOtherFields": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -208,
+        -672
+      ],
+      "id": "e9c251c8-0068-4d64-8809-86172d4249c4",
+      "name": "System Prompt"
+    },
+    {
+      "parameters": {
+        "mode": "combine",
+        "combineBy": "combineByPosition",
+        "numberInputs": 4,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.2,
+      "position": [
+        768,
+        -720
+      ],
+      "id": "626c66bd-4c2d-4f0b-9594-59526a57f93d",
+      "name": "Merge1"
+    },
+    {
+      "parameters": {
+        "content": "## Document Metadata\n",
+        "height": 272,
+        "width": 720,
+        "color": 4
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -64,
+        -48
+      ],
+      "typeVersion": 1,
+      "id": "59ef7ea3-41c7-484c-bd4e-e8122ad209b9",
+      "name": "Sticky Note1"
+    },
+    {
+      "parameters": {
+        "resource": "image",
+        "modelId": {
+          "__rl": true,
+          "value": "gemma3:12b",
+          "mode": "list",
+          "cachedResultName": "gemma3:12b"
+        },
+        "text": "=### Required Field & Format\n**Travel Date (Start and End)**\n\n```json\n\"travel_date\": {\n  \"start\": \"YYYY-MM-DD\",\n  \"end\": \"YYYY-MM-DD\"\n}\n```\n\nReturn **only** the JSON object.",
+        "options": {
+          "system": "={{ $json.core_system }}"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.ollama",
+      "typeVersion": 1,
+      "position": [
+        208,
+        -784
+      ],
+      "id": "a108deee-7bea-4002-a4a2-25fd4159fce3",
+      "name": "Date",
+      "credentials": {
+        "ollamaApi": {
+          "id": "3aYp27wYi5u3lPV0",
+          "name": "Ollama account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "image",
+        "modelId": {
+          "__rl": true,
+          "value": "gemma3:12b",
+          "mode": "list",
+          "cachedResultName": "gemma3:12b"
+        },
+        "text": "=### Required Field & Format\n\n **Total Ticket Price**\n\n```json\n\"price\": num\n```\n\nReturn **only** the JSON object.",
+        "options": {
+          "system": "={{ $json.core_system }}"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.ollama",
+      "typeVersion": 1,
+      "position": [
+        208,
+        -608
+      ],
+      "id": "f7818073-3761-4464-a1f2-da957f299a92",
+      "name": "Price",
+      "credentials": {
+        "ollamaApi": {
+          "id": "3aYp27wYi5u3lPV0",
+          "name": "Ollama account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "image",
+        "modelId": {
+          "__rl": true,
+          "value": "gemma3:12b",
+          "mode": "list",
+          "cachedResultName": "gemma3:12b"
+        },
+        "text": "=### Required Field & Format\n**Travel Class**\n\n```json\n\"class\": num\n```\n\nReturn **only** the JSON object.",
+        "options": {
+          "system": "={{ $json.core_system }}"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.ollama",
+      "typeVersion": 1,
+      "position": [
+        208,
+        -432
+      ],
+      "id": "046ad4a9-b064-4712-a3d9-37712e51bcf7",
+      "name": "Class",
+      "credentials": {
+        "ollamaApi": {
+          "id": "3aYp27wYi5u3lPV0",
+          "name": "Ollama account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "mode": "raw",
+        "jsonOutput": "={{ $json.content }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        464,
+        -784
+      ],
+      "id": "ac9b6e49-e8c2-420c-8454-dd2b39c77e32",
+      "name": "Parse Dates"
+    },
+    {
+      "parameters": {
+        "mode": "raw",
+        "jsonOutput": "={{ $json.content }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        464,
+        -608
+      ],
+      "id": "ae7b27cb-3e47-4f27-adf8-2be699760e65",
+      "name": "Parse Price"
+    },
+    {
+      "parameters": {
+        "mode": "raw",
+        "jsonOutput": "={{ $json.content }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        464,
+        -432
+      ],
+      "id": "3a77bf3d-23a7-49e0-bd3e-fceca4288f17",
+      "name": "Parse Class"
+    },
+    {
+      "parameters": {
+        "content": "## Value Extraction\n",
+        "height": 864,
+        "width": 720,
+        "color": 5
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -64,
+        -1040
+      ],
+      "typeVersion": 1,
+      "id": "a93045ad-4433-4058-88d6-8276125d6bb1",
+      "name": "Sticky Note"
+    },
+    {
+      "parameters": {
+        "mode": "raw",
+        "jsonOutput": "={{ $json.content }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        464,
+        -960
+      ],
+      "id": "8844e27b-5dc5-4d3f-85b2-9d9fda4e3e50",
+      "name": "Parse Cities"
+    },
+    {
+      "parameters": {
+        "resource": "image",
+        "modelId": {
+          "__rl": true,
+          "value": "gemma3:12b",
+          "mode": "list",
+          "cachedResultName": "gemma3:12b"
+        },
+        "text": "=### Required Field & Format\n**City Name (Begin and End of Journey)**\n\n```json\n\"city\": {\n  \"from\": \"city_name\",\n  \"to\": \"city_name\"\n}\n```\n\nReturn **only** the JSON object.",
+        "binaryPropertyName": "=data",
+        "options": {
+          "system": "={{ $json.core_system }}"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.ollama",
+      "typeVersion": 1,
+      "position": [
+        208,
+        -960
+      ],
+      "id": "b73dadca-79b0-4fbc-ad73-0483feaca74d",
+      "name": "Cities",
+      "credentials": {
+        "ollamaApi": {
+          "id": "3aYp27wYi5u3lPV0",
+          "name": "Ollama account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "On form submission": {
+      "main": [
+        [
+          {
+            "node": "Split Out",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Merge": {
+      "main": [
+        [
+          {
+            "node": "Insert row",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Document Metadata": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Insert row": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Split Out": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Over Items": {
+      "main": [
+        [
+          {
+            "node": "Form",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "Document Metadata",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "System Prompt",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "System Prompt": {
+      "main": [
+        [
+          {
+            "node": "Date",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Price",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Class",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Cities",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Merge1": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Date": {
+      "main": [
+        [
+          {
+            "node": "Parse Dates",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Price": {
+      "main": [
+        [
+          {
+            "node": "Parse Price",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Class": {
+      "main": [
+        [
+          {
+            "node": "Parse Class",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Parse Dates": {
+      "main": [
+        [
+          {
+            "node": "Merge1",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Parse Price": {
+      "main": [
+        [
+          {
+            "node": "Merge1",
+            "type": "main",
+            "index": 2
+          }
+        ]
+      ]
+    },
+    "Parse Class": {
+      "main": [
+        [
+          {
+            "node": "Merge1",
+            "type": "main",
+            "index": 3
+          }
+        ]
+      ]
+    },
+    "Cities": {
+      "main": [
+        [
+          {
+            "node": "Parse Cities",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Parse Cities": {
+      "main": [
+        [
+          {
+            "node": "Merge1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "availableInMCP": false,
+    "timeSavedMode": "fixed",
+    "callerPolicy": "workflowsFromSameOwner"
+  },
+  "versionId": "44d4aa82-9cce-4c44-ad8e-8b54150dae11",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "c9efaf26b0809d3cdcb0750e909fc43db6bd679d171ae279f735a9ec9371513e"
+  },
+  "id": "crZFisWF2wMBZB31",
+  "tags": []
+}

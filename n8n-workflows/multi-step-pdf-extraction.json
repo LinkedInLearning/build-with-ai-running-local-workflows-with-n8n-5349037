@@ -1,0 +1,769 @@
+{
+  "name": "LiL 5349037 Workflow 5",
+  "nodes": [
+    {
+      "parameters": {
+        "formTitle": "Document upload",
+        "formDescription": "Upload a PDF",
+        "formFields": {
+          "values": [
+            {
+              "fieldName": "data",
+              "fieldLabel": "PDF",
+              "fieldType": "file"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.formTrigger",
+      "typeVersion": 2.4,
+      "position": [
+        -1360,
+        48
+      ],
+      "id": "8ba93a5e-3da8-4682-ae5c-695fe80e0955",
+      "name": "On form submission",
+      "webhookId": "6b5a7c46-6127-41e9-a0ae-0f93771ded6b"
+    },
+    {
+      "parameters": {
+        "operation": "pdf",
+        "binaryPropertyName": "={{ Object.keys($binary)[0] }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.extractFromFile",
+      "typeVersion": 1.1,
+      "position": [
+        -480,
+        -192
+      ],
+      "id": "4a2ef0fe-8783-47ab-ad7e-54c2e476371d",
+      "name": "Extract from File"
+    },
+    {
+      "parameters": {
+        "dataTableId": {
+          "__rl": true,
+          "value": "e7FMZbdpdy3SWUYX",
+          "mode": "list",
+          "cachedResultName": "train_tickets",
+          "cachedResultUrl": "/projects/DQNBPdBQuCND1N0d/datatables/e7FMZbdpdy3SWUYX"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "price": "={{ $json.output.price }}",
+            "start": "={{ $json.output.travel_date.start }}",
+            "end": "={{ $json.output.travel_date.end }}",
+            "from": "={{ $json.output.city.from }}",
+            "to": "={{ $json.output.city.to }}",
+            "class": "={{ $json.output.class }}",
+            "filename": "={{ $json.filename }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "start",
+              "displayName": "start",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "end",
+              "displayName": "end",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "from",
+              "displayName": "from",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "to",
+              "displayName": "to",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "price",
+              "displayName": "price",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "class",
+              "displayName": "class",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "filename",
+              "displayName": "filename",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {
+          "optimizeBulk": false
+        }
+      },
+      "type": "n8n-nodes-base.dataTable",
+      "typeVersion": 1.1,
+      "position": [
+        1424,
+        112
+      ],
+      "id": "ce33811c-66c6-4110-823a-1dbf867d354c",
+      "name": "Insert row"
+    },
+    {
+      "parameters": {
+        "mode": "combine",
+        "combineBy": "combineByPosition",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.2,
+      "position": [
+        1056,
+        -528
+      ],
+      "id": "26f7f23d-8d0b-4bee-804d-8b88f4cf3978",
+      "name": "Merge"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "9655cb62-c2db-4e72-8083-efe15180594c",
+              "name": "filename",
+              "value": "={{ $binary.data.fileName }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        240,
+        64
+      ],
+      "id": "c31400c6-1395-4d30-af2a-91e44b3adcd6",
+      "name": "Document Metadata"
+    },
+    {
+      "parameters": {
+        "operation": "completion",
+        "completionTitle": "Added!",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.form",
+      "typeVersion": 2.4,
+      "position": [
+        -736,
+        -160
+      ],
+      "id": "0c07fd4b-5fe6-458f-a626-ee145f0a49a8",
+      "name": "Form",
+      "webhookId": "11eb22f7-ed4d-4eb9-97c4-e297d4773c4a"
+    },
+    {
+      "parameters": {
+        "fieldToSplitOut": "$binary",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitOut",
+      "typeVersion": 1,
+      "position": [
+        -1168,
+        48
+      ],
+      "id": "3eb361ed-9e10-4dd9-9903-fba57108532f",
+      "name": "Split Out"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        -960,
+        48
+      ],
+      "id": "f195c033-cbcb-4c1f-8109-717ae26fcf9e",
+      "name": "Loop Over Items"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "a3b22d65-b09c-44b7-88b9-86c68ed384ce",
+              "name": "data",
+              "value": "={{ Object.keys($binary)[0] }}",
+              "type": "binary"
+            },
+            {
+              "id": "703702ec-8a4a-495e-85fd-38e72822a414",
+              "name": "",
+              "value": "",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -768,
+        64
+      ],
+      "id": "6311bf3a-b0bb-4ad2-9eb6-26fa55932053",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "model": "gemma3:4b",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOllama",
+      "typeVersion": 1,
+      "position": [
+        48,
+        -320
+      ],
+      "id": "a32cc4d7-769f-4b6b-a249-c67acd9c6643",
+      "name": "Ollama Chat Model",
+      "credentials": {
+        "ollamaApi": {
+          "id": "3aYp27wYi5u3lPV0",
+          "name": "Ollama account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "0281493c-d029-4124-89ef-4e3d6ce9aecd",
+              "name": "core_system",
+              "value": "You are a **document value extraction system**.  \n\nYour task is to analyze the provided document and extract **only** the explicitly requested values. Do **not** infer, guess, normalize beyond the specified format, or include any additional fields.  \n\n### Extraction Rules  \n* Extract **exactly** the fields listed below — no more, no less. \n* If a value is missing or unclear, return `null` for that field. \n* Output must be **valid JSON only**, with no extra text. \n* Dates must follow the exact format specified. \n* Numeric values must not include currency symbols.",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -208,
+        -672
+      ],
+      "id": "8c1e1605-4ec9-45db-b99a-a2574e8fb2e4",
+      "name": "System Prompt"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $('Extract from File').item.json.text}}",
+        "hasOutputParser": true,
+        "messages": {
+          "messageValues": [
+            {
+              "message": "={{ $json.core_system }}\n\n### Required Field & Format\n**City Name (Begin and End of Journey)**\n\n```json\n\"city\": {\n  \"from\": \"city_name\",\n  \"to\": \"city_name\"\n}\n```\n\nReturn **only** the JSON object."
+            }
+          ]
+        },
+        "batching": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chainLlm",
+      "typeVersion": 1.9,
+      "position": [
+        208,
+        -960
+      ],
+      "id": "a13683ef-8f07-4370-b6b8-72741d69acd1",
+      "name": "Cities",
+      "retryOnFail": true
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $('Extract from File').item.json.text}}",
+        "hasOutputParser": true,
+        "messages": {
+          "messageValues": [
+            {
+              "message": "={{ $json.core_system }}\n\n### Required Field & Format\n**Travel Date (Start and End)**\n\n```json\n\"travel_date\": {\n  \"start\": \"YYYY-MM-DD\",\n  \"end\": \"YYYY-MM-DD\"\n}\n```\n\nReturn **only** the JSON object."
+            }
+          ]
+        },
+        "batching": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chainLlm",
+      "typeVersion": 1.9,
+      "position": [
+        208,
+        -784
+      ],
+      "id": "9706b00e-bcc0-4531-9c8c-a02e36b04bee",
+      "name": "Dates",
+      "retryOnFail": true
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $('Extract from File').item.json.text}}",
+        "hasOutputParser": true,
+        "messages": {
+          "messageValues": [
+            {
+              "message": "={{ $json.core_system }}\n\n### Required Field & Format\n\n **Total Ticket Price**\n\n```json\n\"price\": 104.50\n```\n\nReturn **only** the JSON object."
+            }
+          ]
+        },
+        "batching": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chainLlm",
+      "typeVersion": 1.9,
+      "position": [
+        208,
+        -608
+      ],
+      "id": "f4f15ce5-31e7-4147-a78f-a9115ea3647d",
+      "name": "Price",
+      "retryOnFail": true
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $('Extract from File').item.json.text}}",
+        "hasOutputParser": true,
+        "messages": {
+          "messageValues": [
+            {
+              "message": "={{ $json.core_system }}\n\n### Required Field & Format\n**Travel Class**\n\n```json\n\"class\": 2\n```\n\nReturn **only** the JSON object."
+            }
+          ]
+        },
+        "batching": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chainLlm",
+      "typeVersion": 1.9,
+      "position": [
+        208,
+        -432
+      ],
+      "id": "181a69dc-3562-446d-8af6-c9ca7c1b9a3a",
+      "name": "Class",
+      "retryOnFail": true
+    },
+    {
+      "parameters": {
+        "jsonSchemaExample": "{\n  \"city\": {\n    \"from\": \"Paris\",\n    \"to\": \"Berlin\"\n  }\n}"
+      },
+      "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
+      "typeVersion": 1.3,
+      "position": [
+        480,
+        -832
+      ],
+      "id": "a1b046c3-bfce-46ba-b2eb-2e85ddb91280",
+      "name": "Parse Cities"
+    },
+    {
+      "parameters": {
+        "jsonSchemaExample": "{\n  \"travel_date\": {\n    \"start\": \"2024-06-01\",\n    \"end\": \"2024-06-05\"\n  }\n}"
+      },
+      "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
+      "typeVersion": 1.3,
+      "position": [
+        480,
+        -688
+      ],
+      "id": "56fce6e0-11c0-43df-891e-a63bfd851633",
+      "name": "Parse Dates"
+    },
+    {
+      "parameters": {
+        "jsonSchemaExample": "{\n  \"price\": 104.50\n}"
+      },
+      "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
+      "typeVersion": 1.3,
+      "position": [
+        464,
+        -512
+      ],
+      "id": "6d13cd58-5b71-430d-b70f-9a541987aee2",
+      "name": "Parse Price"
+    },
+    {
+      "parameters": {
+        "jsonSchemaExample": "{\n  \"class\": 2\n}"
+      },
+      "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
+      "typeVersion": 1.3,
+      "position": [
+        448,
+        -320
+      ],
+      "id": "2992fa88-e825-4c0f-a11a-5deaee51aa8f",
+      "name": "Parse Class"
+    },
+    {
+      "parameters": {
+        "mode": "combine",
+        "combineBy": "combineByPosition",
+        "numberInputs": 4,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.2,
+      "position": [
+        768,
+        -720
+      ],
+      "id": "7ca487a6-8837-4cdf-90aa-3a4bb0381e76",
+      "name": "Merge1"
+    },
+    {
+      "parameters": {
+        "content": "## Value Extraction\n",
+        "height": 864,
+        "width": 720,
+        "color": 5
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -64,
+        -1040
+      ],
+      "typeVersion": 1,
+      "id": "720f7c70-0dac-48ad-a0bc-80da1294b37f",
+      "name": "Sticky Note"
+    },
+    {
+      "parameters": {
+        "content": "## Document Metadata\n",
+        "height": 272,
+        "width": 720,
+        "color": 4
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -64,
+        -48
+      ],
+      "typeVersion": 1,
+      "id": "d457a301-3345-4923-9673-503764fe8176",
+      "name": "Sticky Note1"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "On form submission": {
+      "main": [
+        [
+          {
+            "node": "Split Out",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extract from File": {
+      "main": [
+        [
+          {
+            "node": "System Prompt",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Merge": {
+      "main": [
+        [
+          {
+            "node": "Insert row",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Document Metadata": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Insert row": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Split Out": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Over Items": {
+      "main": [
+        [
+          {
+            "node": "Form",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "Extract from File",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Document Metadata",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Ollama Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Class",
+            "type": "ai_languageModel",
+            "index": 0
+          },
+          {
+            "node": "Price",
+            "type": "ai_languageModel",
+            "index": 0
+          },
+          {
+            "node": "Dates",
+            "type": "ai_languageModel",
+            "index": 0
+          },
+          {
+            "node": "Cities",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "System Prompt": {
+      "main": [
+        [
+          {
+            "node": "Class",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Price",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Dates",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Cities",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Class": {
+      "main": [
+        [
+          {
+            "node": "Merge1",
+            "type": "main",
+            "index": 3
+          }
+        ]
+      ]
+    },
+    "Parse Cities": {
+      "ai_outputParser": [
+        [
+          {
+            "node": "Cities",
+            "type": "ai_outputParser",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Parse Dates": {
+      "ai_outputParser": [
+        [
+          {
+            "node": "Dates",
+            "type": "ai_outputParser",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Parse Price": {
+      "ai_outputParser": [
+        [
+          {
+            "node": "Price",
+            "type": "ai_outputParser",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Parse Class": {
+      "ai_outputParser": [
+        [
+          {
+            "node": "Class",
+            "type": "ai_outputParser",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Merge1": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Cities": {
+      "main": [
+        [
+          {
+            "node": "Merge1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Dates": {
+      "main": [
+        [
+          {
+            "node": "Merge1",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Price": {
+      "main": [
+        [
+          {
+            "node": "Merge1",
+            "type": "main",
+            "index": 2
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "availableInMCP": false
+  },
+  "versionId": "a1601b03-69cf-49ba-bd4a-8f8af70fd771",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "c9efaf26b0809d3cdcb0750e909fc43db6bd679d171ae279f735a9ec9371513e"
+  },
+  "id": "yFyWS7XgRkrZ0bnA",
+  "tags": []
+}

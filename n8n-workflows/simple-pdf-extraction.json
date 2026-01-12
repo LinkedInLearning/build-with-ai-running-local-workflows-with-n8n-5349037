@@ -1,0 +1,453 @@
+{
+  "name": "LiL 5349037 Workflow 3",
+  "nodes": [
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "value": "gemma3:4b",
+          "mode": "list",
+          "cachedResultName": "gemma3:4b"
+        },
+        "messages": {
+          "values": [
+            {
+              "content": "={{ $json.text }}"
+            }
+          ]
+        },
+        "options": {
+          "system": "You are a **document value extraction system**.\n\nYour task is to analyze the provided document and extract **only** the explicitly requested values.\nDo **not** infer, guess, normalize beyond the specified format, or include any additional fields.\n\n### Extraction Rules\n\n* Extract **exactly** the fields listed below — no more, no less.\n* If a value is missing or unclear, return `null` for that field.\n* Output must be **valid JSON only**, with no extra text.\n* Dates must follow the exact format specified.\n* Numeric values must not include currency symbols.\n\n### Required Fields & Formats\n\n1. **Travel Date (Start and End)**\n\n```json\n\"travel_date\": {\n  \"start\": \"YYYY-MM-DD\",\n  \"end\": \"YYYY-MM-DD\"\n}\n```\n\n2. **City Name (Begin and End of Journey)**\n\n```json\n\"city\": {\n  \"from\": \"city_name\",\n  \"to\": \"city_name\"\n}\n```\n\n3. **Total Ticket Price**\n\n```json\n\"price\": 104.50\n```\n\n4. **Travel Class**\n\n```json\n\"class\": 2\n```\n\n### Output Format Example\n\n```json\n{\n  \"travel_date\": {\n    \"start\": \"2024-06-01\",\n    \"end\": \"2024-06-05\"\n  },\n  \"city\": {\n    \"from\": \"Paris\",\n    \"to\": \"Berlin\"\n  },\n  \"price\": 104.50,\n  \"class\": 2\n}\n```\n\nReturn **only** the JSON object.",
+          "format": "json"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.ollama",
+      "typeVersion": 1,
+      "position": [
+        -16,
+        -48
+      ],
+      "id": "67e25b53-b49a-4042-ac28-c301182019eb",
+      "name": "Message a model",
+      "retryOnFail": false,
+      "credentials": {
+        "ollamaApi": {
+          "id": "3aYp27wYi5u3lPV0",
+          "name": "Ollama account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "formTitle": "Document upload",
+        "formDescription": "Upload a PDF",
+        "formFields": {
+          "values": [
+            {
+              "fieldName": "data",
+              "fieldLabel": "PDF",
+              "fieldType": "file"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.formTrigger",
+      "typeVersion": 2.4,
+      "position": [
+        -1136,
+        48
+      ],
+      "id": "3157e339-05e2-41e8-ae29-0ccf62912185",
+      "name": "On form submission",
+      "webhookId": "f61c794b-4adc-41de-b98e-9ecc4b45dbdf"
+    },
+    {
+      "parameters": {
+        "operation": "pdf",
+        "binaryPropertyName": "={{ Object.keys($binary)[0] }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.extractFromFile",
+      "typeVersion": 1.1,
+      "position": [
+        -240,
+        -48
+      ],
+      "id": "5a5803e4-e490-43f7-b763-471fd6caf8f6",
+      "name": "Extract from File"
+    },
+    {
+      "parameters": {
+        "dataTableId": {
+          "__rl": true,
+          "value": "e7FMZbdpdy3SWUYX",
+          "mode": "list",
+          "cachedResultName": "train_tickets",
+          "cachedResultUrl": "/projects/DQNBPdBQuCND1N0d/datatables/e7FMZbdpdy3SWUYX"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "price": "={{ $json.price }}",
+            "start": "={{ $json.travel_date.start }}",
+            "end": "={{ $json.travel_date.end }}",
+            "from": "={{ $json.city.from }}",
+            "to": "={{ $json.city.to }}",
+            "class": "={{ $json.class }}",
+            "filename": "={{ $json.filename }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "start",
+              "displayName": "start",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "end",
+              "displayName": "end",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "from",
+              "displayName": "from",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "to",
+              "displayName": "to",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "price",
+              "displayName": "price",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "class",
+              "displayName": "class",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "filename",
+              "displayName": "filename",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {
+          "optimizeBulk": false
+        }
+      },
+      "type": "n8n-nodes-base.dataTable",
+      "typeVersion": 1.1,
+      "position": [
+        784,
+        128
+      ],
+      "id": "166a9385-6473-4a0c-997b-c969aa51eac5",
+      "name": "Insert row"
+    },
+    {
+      "parameters": {
+        "mode": "combine",
+        "combineBy": "combineByPosition",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.2,
+      "position": [
+        560,
+        48
+      ],
+      "id": "ca64431c-b0d3-439f-bd41-d6a97493feb6",
+      "name": "Merge"
+    },
+    {
+      "parameters": {
+        "mode": "raw",
+        "jsonOutput": "={{ $json.content }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        336,
+        -48
+      ],
+      "id": "a4a9ddbe-3acc-4cfd-9147-84cbe469ede4",
+      "name": "Document Content",
+      "alwaysOutputData": true
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "9655cb62-c2db-4e72-8083-efe15180594c",
+              "name": "filename",
+              "value": "={{ $binary.data.fileName }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        336,
+        144
+      ],
+      "id": "74342e4a-79d9-4ff0-81c4-4234b002a996",
+      "name": "Document Metadata"
+    },
+    {
+      "parameters": {
+        "operation": "completion",
+        "completionTitle": "Added!",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.form",
+      "typeVersion": 2.4,
+      "position": [
+        -464,
+        -144
+      ],
+      "id": "72f1254a-3e0c-4bd2-9245-0ec3f4b9ec56",
+      "name": "Form",
+      "webhookId": "d85c8803-0abd-421e-a94b-d76d1988e47e"
+    },
+    {
+      "parameters": {
+        "fieldToSplitOut": "$binary",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitOut",
+      "typeVersion": 1,
+      "position": [
+        -912,
+        48
+      ],
+      "id": "a09188b1-3e52-47f5-8d3f-6b63424f7738",
+      "name": "Split Out"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        -688,
+        48
+      ],
+      "id": "838d654c-4573-4626-b07d-ba3fd259f2ae",
+      "name": "Loop Over Items"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "a3b22d65-b09c-44b7-88b9-86c68ed384ce",
+              "name": "data",
+              "value": "={{ Object.keys($binary)[0] }}",
+              "type": "binary"
+            },
+            {
+              "id": "703702ec-8a4a-495e-85fd-38e72822a414",
+              "name": "",
+              "value": "",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -464,
+        48
+      ],
+      "id": "de125e63-f197-4a3d-adda-7c840db7869e",
+      "name": "Edit Fields"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "On form submission": {
+      "main": [
+        [
+          {
+            "node": "Split Out",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extract from File": {
+      "main": [
+        [
+          {
+            "node": "Message a model",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Message a model": {
+      "main": [
+        [
+          {
+            "node": "Document Content",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Merge": {
+      "main": [
+        [
+          {
+            "node": "Insert row",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Document Content": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Document Metadata": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Insert row": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Split Out": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Over Items": {
+      "main": [
+        [
+          {
+            "node": "Form",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "Extract from File",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Document Metadata",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "availableInMCP": false
+  },
+  "versionId": "565ea0da-3099-4663-87ad-93ff9fa98d8d",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "c9efaf26b0809d3cdcb0750e909fc43db6bd679d171ae279f735a9ec9371513e"
+  },
+  "id": "oYSITdlAWP2oP0Xg",
+  "tags": []
+}
